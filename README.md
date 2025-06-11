@@ -1,32 +1,4 @@
-# 🧱 Resume Builder – Admin Panel Phase
 
-This stage of the `lebenslauf` project represents the **Admin Interface** for dynamically managing the structure of a multilingual resume.
-
----
-
-## ✅ Features Implemented in This Phase
-
-### 🧩 Core Components:
-
-- **Resume Sections** – major categories (e.g., Experience, Skills, Projects)
-- **Paragraphs** – content blocks within each section
-- **Fields** – key-value pairs inside each paragraph (e.g., Role, Date, Company)
-
----
-
-### 🛠️ Functionality Highlights:
-
-- Full CRUD support for:
-  - Resume Sections
-  - Paragraphs
-  - Fields
-
-- Reordering with ↑ and ↓
-- Toggle visibility on any element
-- Flash messages for user feedback
-- Dynamic language support using `Flask-Babel`
-- Clean and flexible SQLAlchemy models
-- Clear separation of admin and public logic
 
 ---
 

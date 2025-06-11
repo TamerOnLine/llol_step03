@@ -1,18 +1,18 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from ..models.models import db, ResumeSection, ResumeParagraph
-from ..i18n_runtime import get_locale
+from main.models.models import db, ResumeSection, ResumeParagraph
+from main.i18n_runtime import get_locale
 
-admin_paragraph = Blueprint("admin_paragraph", __name__)
+from . import admin_bp
 
 # ✅ عرض جميع الفقرات داخل قسم معين
-@admin_paragraph.route('/section/<int:section_id>/view')
+@admin_bp.route('/section/<int:section_id>/view')
 def single_section_view(section_id):
     section = ResumeSection.query.get_or_404(section_id)
     paragraphs = section.paragraphs
-    return render_template('admin/single_section_view.j2', section=section, paragraphs=paragraphs)
+    return render_template('admin/single_section_view.html.j2', section=section, paragraphs=paragraphs)
 
 # ✅ إضافة فقرة
-@admin_paragraph.route('/paragraph/add/<int:section_id>', methods=['POST'])
+@admin_bp.route('/paragraph/add/<int:section_id>', methods=['POST'])
 def add_paragraph(section_id):
     section = ResumeSection.query.get_or_404(section_id)
     paragraph_type = request.form.get('type', 'basic')
@@ -28,10 +28,10 @@ def add_paragraph(section_id):
     db.session.add(paragraph)
     db.session.commit()
     flash("✅ Paragraph added successfully", "success")
-    return redirect(url_for('admin_paragraph.single_section_view', section_id=section.id))
+    return redirect(url_for('admin.single_section_view', section_id=section.id))
 
 # ✅ تعديل فقرة
-@admin_paragraph.route('/paragraph/edit/<int:paragraph_id>', methods=['POST'])
+@admin_bp.route('/paragraph/edit/<int:paragraph_id>', methods=['POST'])
 def edit_paragraph(paragraph_id):
     paragraph = ResumeParagraph.query.get_or_404(paragraph_id)
     paragraph.field_type = request.form.get('type', paragraph.field_type)
@@ -39,20 +39,20 @@ def edit_paragraph(paragraph_id):
     paragraph.is_visible = 'is_visible' in request.form
     db.session.commit()
     flash("💾 Paragraph updated successfully", "success")
-    return redirect(url_for('admin_paragraph.single_section_view', section_id=paragraph.resume_section_id))
+    return redirect(url_for('admin.single_section_view', section_id=paragraph.resume_section_id))
 
 # ✅ حذف فقرة
-@admin_paragraph.route('/paragraph/delete/<int:paragraph_id>', methods=['POST'])
+@admin_bp.route('/paragraph/delete/<int:paragraph_id>', methods=['POST'])
 def delete_paragraph(paragraph_id):
     paragraph = ResumeParagraph.query.get_or_404(paragraph_id)
     section_id = paragraph.resume_section_id
     db.session.delete(paragraph)
     db.session.commit()
     flash("🗑️ Paragraph deleted", "danger")
-    return redirect(url_for('admin_paragraph.single_section_view', section_id=section_id))
+    return redirect(url_for('admin.single_section_view', section_id=section_id))
 
 # ✅ إظهار/إخفاء فقرة
-@admin_paragraph.route('/paragraph/toggle_visibility/<int:paragraph_id>', methods=['POST'])
+@admin_bp.route('/paragraph/toggle_visibility/<int:paragraph_id>', methods=['POST'])
 def toggle_paragraph_visibility(paragraph_id):
     paragraph = ResumeParagraph.query.get_or_404(paragraph_id)
     paragraph.is_visible = not paragraph.is_visible
@@ -61,11 +61,11 @@ def toggle_paragraph_visibility(paragraph_id):
         flash("👁️ Paragraph is now visible", "success")
     else:
         flash("🙈 Paragraph is now hidden", "warning")
-    return redirect(url_for('admin_paragraph.single_section_view', section_id=paragraph.resume_section_id))
+    return redirect(url_for('admin.single_section_view', section_id=paragraph.resume_section_id))
 
 # ✅ تحريك فقرة لأعلى
-@admin_paragraph.route('/paragraph/move_up/<int:paragraph_id>', methods=['POST'])
-def move_up(paragraph_id):
+@admin_bp.route('/paragraph/move_up/<int:paragraph_id>', methods=['POST'])
+def move_paragraph_up(paragraph_id):
     paragraph = ResumeParagraph.query.get_or_404(paragraph_id)
     section = paragraph.resume_section
     previous = ResumeParagraph.query.filter(
@@ -78,11 +78,11 @@ def move_up(paragraph_id):
         flash("⬆️ Paragraph moved up", "info")
     else:
         flash("⚠️ Already at the top", "warning")
-    return redirect(url_for('admin_paragraph.single_section_view', section_id=section.id))
+    return redirect(url_for('admin.single_section_view', section_id=section.id))
 
 # ✅ تحريك فقرة لأسفل
-@admin_paragraph.route('/paragraph/move_down/<int:paragraph_id>', methods=['POST'])
-def move_down(paragraph_id):
+@admin_bp.route('/paragraph/move_down/<int:paragraph_id>', methods=['POST'])
+def move_paragraph_down(paragraph_id):
     paragraph = ResumeParagraph.query.get_or_404(paragraph_id)
     section = paragraph.resume_section
     next_item = ResumeParagraph.query.filter(
@@ -95,4 +95,4 @@ def move_down(paragraph_id):
         flash("⬇️ Paragraph moved down", "info")
     else:
         flash("⚠️ Already at the bottom", "warning")
-    return redirect(url_for('admin_paragraph.single_section_view', section_id=section.id))
+    return redirect(url_for('admin.single_section_view', section_id=section.id))

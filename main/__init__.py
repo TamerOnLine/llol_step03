@@ -3,10 +3,7 @@ from .models.models import (
     db, Section, Setting, ResumeSection,
     ResumeParagraph, ResumeField, NavigationLink, LanguageOption
 )
-from .routes.admin_routes import admin_bp
-from .routes.admin_builder_routes import admin_builder_bp
-from .routes.admin_paragraph import admin_paragraph
-from .routes.admin_field import admin_field
+from .routes.admin import admin_bp
 
 
 from .routes.public_routes import public_bp
@@ -41,12 +38,8 @@ def create_app():
     init_i18n(app)
 
     app.register_blueprint(main_bp)
-    app.register_blueprint(admin_bp)
     app.register_blueprint(public_bp)
-    app.register_blueprint(admin_builder_bp)
-    app.register_blueprint(admin_paragraph)
-    app.register_blueprint(admin_field)
-    
+    app.register_blueprint(admin_bp)
 
     with app.app_context():
         db_path = os.path.join(app.instance_path, 'lebenslauf.db')

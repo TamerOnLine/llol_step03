@@ -56,16 +56,18 @@ class ResumeParagraph(db.Model):
 
 
 class ResumeField(db.Model):
-    """
-    Key-value pair for details in a paragraph.
-    """
     id = db.Column(db.Integer, primary_key=True)
     resume_paragraph_id = db.Column(db.Integer, db.ForeignKey('resume_paragraph.id'), nullable=False)
-    key = db.Column(db.String(50), nullable=False)  # e.g., title, description, date
+    key = db.Column(db.String(50), nullable=False)
     value = db.Column(db.Text, nullable=True)
     field_type = db.Column("type", db.String(50), nullable=False, default='text')
     order = db.Column(db.Integer, default=0)
     is_visible = db.Column(db.Boolean, default=True)
+
+    # ✅ العلاقة الصحيحة بدون تضارب
+    paragraph = db.relationship("ResumeParagraph", backref="resume_fields")
+
+
 
 
 class NavigationLink(db.Model):

@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from ..models.models import db, Section, Setting, ResumeSection, ResumeParagraph, ResumeField
+from main.models.models import db, Section, Setting, ResumeSection, ResumeParagraph, ResumeField
 from flask_babel import force_locale
-from ..i18n_runtime import get_locale
+from main.i18n_runtime import get_locale
 import json
 
-admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+from . import admin_bp
 
 @admin_bp.route("/sections", methods=["GET", "POST"])
 def manage_sections():
@@ -129,14 +129,14 @@ def manage_settings():
             body_font_value=body_font_value
         )
 
-@admin_bp.route("/builder")
-def resume_builder():
-    """
-    Display the resume builder interface.
+# @admin_bp.route("/builder")
+# def resume_builder():
+#     """
+#     Display the resume builder interface.
 
-    Returns:
-        Response: Rendered builder template.
-    """
-    sections = ResumeSection.query.order_by(ResumeSection.order).all()
-    return render_template("admin/resume_builder.html.j2", sections=sections)
+#     Returns:
+#         Response: Rendered builder template.
+#     """
+#     sections = ResumeSection.query.order_by(ResumeSection.order).all()
+#     return render_template("admin/resume_builder.html.j2", sections=sections)
 
